@@ -1,4 +1,4 @@
-<center<img src="https://lh3.googleusercontent.com/WSShMSZQqRJQGJ-cjXGLwD-ZcWMGG_fNYIM-zYGZcTFKiWWxUVKk57IbaQ0-8vKIOOAa1mG-bZJaochfZahaoql6rpsE-rC9=s1024" alt="Sonic" width="25%">
+<center><img src="https://lh3.googleusercontent.com/WSShMSZQqRJQGJ-cjXGLwD-ZcWMGG_fNYIM-zYGZcTFKiWWxUVKk57IbaQ0-8vKIOOAa1mG-bZJaochfZahaoql6rpsE-rC9=s1024" alt="Sonic" width="25%">
 
 # Sonic
 Ultrasonic Emitter
