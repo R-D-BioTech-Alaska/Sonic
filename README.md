@@ -7,7 +7,7 @@ Sonic is a simple python program (now also available as an exe) that allows
 the user to adjust the sound emitted to the connected speaker or device 
 between the levels of 0 - 100,000 hz.
 
-The Requirement.bat is for the .pyw file. Exe is standalone.
+The Requirement.bat is for the .pyw file. Exe is standalone in dist.
 
 ***Warning***
 
