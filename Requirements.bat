@@ -14,7 +14,7 @@ echo Setting up the environment...
 python -m pip install PyQt5 numpy pyaudio --user
 
 echo Starting the application...
-start "" "Sonic.exe"
+start "" "Sonic.pyw"
 echo Exiting setup.
 pause
 exit
