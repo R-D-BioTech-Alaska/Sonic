@@ -1,4 +1,4 @@
-<center><img src="[https://lh3.googleusercontent.com/WSShMSZQqRJQGJ-cjXGLwD-ZcWMGG_fNYIM-zYGZcTFKiWWxUVKk57IbaQ0-8vKIOOAa1mG-bZJaochfZahaoql6rpsE-rC9=s1024](https://lh3.googleusercontent.com/4D9_D8Sszm7f3eYRF6yyvDzg8tWR-irFjczDkd6b19yraBCMzuttcchyKUlvyRhsnJwnBPKFxiVvOszgAnjkRyaBnOw88A=s1600)" alt="Sonic" width="25%"></center>
+<center><img src="https://lh3.googleusercontent.com/Bv2nlfLkUIm_kYY0zXKJ-LhZm5pwyAihwlzlZbk4karo6baFKFKsdmhqF5KwvOwcrQmVxPhmT9UYDws6je4uqoHapibrKyY=s1024" alt="Sonic" width="25%"></center>
 
 # Sonic
 Ultrasonic Emitter
