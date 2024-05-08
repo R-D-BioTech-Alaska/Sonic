@@ -1,4 +1,4 @@
-<img src="https://lh3.googleusercontent.com/WSShMSZQqRJQGJ-cjXGLwD-ZcWMGG_fNYIM-zYGZcTFKiWWxUVKk57IbaQ0-8vKIOOAa1mG-bZJaochfZahaoql6rpsE-rC9=s1024" alt="Sonic" width="25%">
+<center<img src="https://lh3.googleusercontent.com/WSShMSZQqRJQGJ-cjXGLwD-ZcWMGG_fNYIM-zYGZcTFKiWWxUVKk57IbaQ0-8vKIOOAa1mG-bZJaochfZahaoql6rpsE-rC9=s1024" alt="Sonic" width="25%">
 
 # Sonic
 Ultrasonic Emitter
@@ -11,3 +11,4 @@ between the levels of 0 - 100,000 hz.
 
 Please aware that this program emits sounds that can be harmful and dangerous 
 to people and animals. The levels allowed on this device can cause hallucinations.
+</center>
