@@ -1,116 +1,177 @@
 import sys
 import numpy as np
 import pyaudio
-from PyQt5.QtWidgets import QApplication, QMainWindow, QSlider, QLabel, QVBoxLayout, QWidget, QPushButton, QHBoxLayout, QLineEdit
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QSlider, QLabel, QVBoxLayout,
+                             QWidget, QPushButton, QHBoxLayout, QLineEdit, QStatusBar, QMessageBox)
+from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtGui import QPixmap
+
+class SoundThread(QThread):
+    def __init__(self, get_audio_data):
+        super(SoundThread, self).__init__()
+        self.get_audio_data = get_audio_data
+        self.running = True
+
+    def run(self):
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
+        try:
+            while self.running:
+                data = self.get_audio_data()
+                stream.write(data)
+        finally:
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+
+    def stop(self):
+        self.running = False
+        self.wait()
 
 class UltrasonicEmitter(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sonic")
+        self.setupUI()
+        self.sound_thread = None
+        self.frequency = 20000
+        self.volume = 0.5
+        self.amplification_factor = 1.0  # No amplification by default
+        self.amplified = False
+        self.muted = False
 
-        # Frequency Slider
+    def setupUI(self):
+        self.statusBar = QStatusBar()
+        self.setStatusBar(self.statusBar)
+        self.statusBar.showMessage("Ready")
+
+        self.image_label = QLabel(self)
+        pixmap = QPixmap('Sonic2.jpg')
+        self.image_label.setPixmap(pixmap.scaled(200, 200, Qt.KeepAspectRatio))
+
         self.frequency_slider = QSlider(Qt.Horizontal)
-        self.frequency_slider.setRange(0, 100000)  # Adjusted frequency range to 0 to 100,000 Hz
+        self.frequency_slider.setRange(0, 100000)
         self.frequency_slider.setValue(20000)
-        self.frequency_slider.valueChanged.connect(self.slider_changed)
+        self.frequency_slider.valueChanged.connect(self.update_audio_settings)
 
-        # Frequency Input
         self.frequency_input = QLineEdit("20000")
-        self.frequency_input.returnPressed.connect(self.input_changed)
+        self.frequency_input.returnPressed.connect(self.input_frequency_change)
 
-        # Volume Slider
         self.volume_slider = QSlider(Qt.Horizontal)
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(50)
-        self.volume_slider.valueChanged.connect(self.update_volume)
+        self.volume_slider.valueChanged.connect(self.update_audio_settings)
 
-        # Labels
-        self.frequency_label = QLabel("Frequency: 20000 Hz")
-        self.volume_label = QLabel("Volume: 50%")
+        self.amplification_slider = QSlider(Qt.Horizontal)
+        self.amplification_slider.setRange(100, 500)  # Amplification from 1x to 5x
+        self.amplification_slider.setValue(100)  # Start at 1x (no amplification)
+        self.amplification_slider.valueChanged.connect(self.update_amplification)
 
-        # Play/Stop Button
+        self.amplify_button = QPushButton("Toggle Amplification")
+        self.amplify_button.clicked.connect(self.toggle_amplification)
+
+        self.mute_button = QPushButton("Mute")
+        self.mute_button.clicked.connect(self.toggle_mute)
+
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.toggle_play)
 
-        # Layout
         layout = QVBoxLayout()
-        layout.addWidget(self.frequency_label)
+        layout.addWidget(self.image_label)
+        layout.addWidget(QLabel("Frequency (Hz):"))
         layout.addWidget(self.frequency_input)
         layout.addWidget(self.frequency_slider)
-        layout.addWidget(self.volume_label)
+        layout.addWidget(QLabel("Volume (%):"))
         layout.addWidget(self.volume_slider)
+        layout.addWidget(QLabel("Amplification Factor:"))
+        layout.addWidget(self.amplification_slider)
+        layout.addWidget(self.amplify_button)
+
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.play_button)
+        button_layout.addWidget(self.mute_button)
         layout.addLayout(button_layout)
 
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-        # Sound generation variables
-        self.is_playing = False
-        self.p = pyaudio.PyAudio()
-        self.stream = None
-        self.frequency = 20000
-        self.volume = 0.5
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.generate_sound)
-
-    def slider_changed(self):
+    def update_audio_settings(self):
         self.frequency = self.frequency_slider.value()
-        self.frequency_label.setText(f"Frequency: {self.frequency} Hz")
-        self.frequency_input.setText(str(self.frequency))
-
-    def input_changed(self):
-        text = self.frequency_input.text()
-        try:
-            frequency = int(text)
-            if 0 <= frequency <= 100000:
-                self.frequency_slider.setValue(frequency)
-                self.frequency = frequency
-                self.frequency_label.setText(f"Frequency: {self.frequency} Hz")
-            else:
-                raise ValueError("Frequency out of range")
-        except ValueError:
-            self.frequency_input.setText(str(self.frequency))  # Reset to the previous valid value
-
-    def update_volume(self):
         self.volume = self.volume_slider.value() / 100.0
-        self.volume_label.setText(f"Volume: {self.volume * 100:.0f}%")
+        self.frequency_input.setText(str(self.frequency))
+        self.statusBar.showMessage(f"Frequency: {self.frequency} Hz, Volume: {int(self.volume * 100)}%, Amplification: {self.amplification_factor:.1f}x")
+
+    def input_frequency_change(self):
+        try:
+            frequency = int(self.frequency_input.text())
+            self.frequency_slider.setValue(frequency)
+        except ValueError:
+            self.frequency_input.setText(str(self.frequency))
+
+    def update_amplification(self, value):
+        self.amplification_factor = value / 100.0
+        if self.amplified:
+            self.statusBar.showMessage(f"Amplification set to: {self.amplification_factor:.1f}x")
+
+    def toggle_amplification(self):
+        if not self.amplified:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Amplifying the volume can cause damage to your hearing and speakers.")
+            msg.setInformativeText("Do you want to proceed with amplifying the volume?")
+            msg.setWindowTitle("Warning: Amplified Volume")
+            msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+            retval = msg.exec_()
+            if retval == QMessageBox.Yes:
+                self.amplified = True
+                self.statusBar.showMessage(f"Amplification turned On. Factor: {self.amplification_factor:.1f}x")
+            else:
+                self.amplification_slider.setValue(100)
+        else:
+            self.amplified = False
+            self.statusBar.showMessage("Amplification turned Off.")
+
+    def get_audio_data(self):
+        samples = np.linspace(0, 0.1, int(44100 * 0.1), endpoint=False)
+        effective_volume = self.volume * self.amplification_factor if self.amplified else self.volume
+        waveform = (np.sin(2 * np.pi * self.frequency * samples) * effective_volume).astype(np.float32)
+        return waveform.tobytes()
+
+    def toggle_mute(self):
+        if not self.muted:
+            self.previous_volume = self.volume_slider.value()
+            self.volume_slider.setValue(0)
+            self.muted = True
+        else:
+            self.volume_slider.setValue(self.previous_volume)
+            self.muted = False
+        self.update_audio_settings()  # Ensure volume level is updated in the status bar
 
     def toggle_play(self):
-        if self.is_playing:
+        if self.sound_thread and self.sound_thread.isRunning():
             self.stop_playing()
         else:
             self.start_playing()
 
     def start_playing(self):
-        self.is_playing = True
+        self.sound_thread = SoundThread(self.get_audio_data)
+        self.sound_thread.start()
         self.play_button.setText("Stop")
-        self.stream = self.p.open(format=pyaudio.paFloat32,
-                                  channels=1,
-                                  rate=44100,
-                                  output=True)
-        self.timer.start(100)  # Timer to periodically generate sound
+        self.statusBar.showMessage("Playing...")
 
     def stop_playing(self):
-        self.is_playing = False
+        if self.sound_thread:
+            self.sound_thread.stop()
         self.play_button.setText("Play")
-        self.timer.stop()
-        self.stream.stop_stream()
-        self.stream.close()
-
-    def generate_sound(self):
-        sample_rate = 44100
-        duration = 0.1  # seconds
-        samples = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
-        waveform = (np.sin(2 * np.pi * self.frequency * samples) * self.volume).astype(np.float32)
-        if self.stream.is_active():
-            self.stream.write(waveform.tobytes())
+        self.statusBar.showMessage("Stopped")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    window = UltrasonicEmitter()
+    window.show()
+    sys.exit(app.exec_())
+
     window = UltrasonicEmitter()
     window.show()
     sys.exit(app.exec_())
