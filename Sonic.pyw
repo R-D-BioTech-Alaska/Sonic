@@ -36,7 +36,7 @@ class UltrasonicEmitter(QMainWindow):
         self.sound_thread = None
         self.frequency = 20000
         self.volume = 0.5
-        self.amplification_factor = 1.0  # No amplification by default
+        self.amplification_factor = 1.0
         self.amplified = False
         self.muted = False
 
@@ -46,35 +46,42 @@ class UltrasonicEmitter(QMainWindow):
         self.statusBar.showMessage("Ready")
 
         self.image_label = QLabel(self)
-        pixmap = QPixmap('Sonic2.jpg')
+        pixmap = QPixmap('Sonic2no.png')
         self.image_label.setPixmap(pixmap.scaled(200, 200, Qt.KeepAspectRatio))
 
         self.frequency_slider = QSlider(Qt.Horizontal)
         self.frequency_slider.setRange(0, 100000)
         self.frequency_slider.setValue(20000)
         self.frequency_slider.valueChanged.connect(self.update_audio_settings)
+        self.frequency_slider.setStyleSheet("QSlider::handle:horizontal {background-color: teal;}")
 
         self.frequency_input = QLineEdit("20000")
-        self.frequency_input.returnPressed.connect(self.input_frequency_change)
+        self.frequency_input.returnPressed.connect(lambda: self.frequency_slider.setValue(int(self.frequency_input.text())))
+        self.frequency_input.setStyleSheet("QLineEdit {background-color: white; color: black;}")
 
         self.volume_slider = QSlider(Qt.Horizontal)
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(50)
         self.volume_slider.valueChanged.connect(self.update_audio_settings)
+        self.volume_slider.setStyleSheet("QSlider::handle:horizontal {background-color: teal;}")
 
         self.amplification_slider = QSlider(Qt.Horizontal)
-        self.amplification_slider.setRange(100, 500)  # Amplification from 1x to 5x
-        self.amplification_slider.setValue(100)  # Start at 1x (no amplification)
+        self.amplification_slider.setRange(100, 500)
+        self.amplification_slider.setValue(100)
         self.amplification_slider.valueChanged.connect(self.update_amplification)
+        self.amplification_slider.setStyleSheet("QSlider::handle:horizontal {background-color: teal;}")
 
         self.amplify_button = QPushButton("Toggle Amplification")
         self.amplify_button.clicked.connect(self.toggle_amplification)
+        self.amplify_button.setStyleSheet("QPushButton {background-color: teal; color: white;}")
 
         self.mute_button = QPushButton("Mute")
         self.mute_button.clicked.connect(self.toggle_mute)
+        self.mute_button.setStyleSheet("QPushButton {background-color: teal; color: white;}")
 
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.toggle_play)
+        self.play_button.setStyleSheet("QPushButton {background-color: teal; color: white;}")
 
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
@@ -102,17 +109,9 @@ class UltrasonicEmitter(QMainWindow):
         self.frequency_input.setText(str(self.frequency))
         self.statusBar.showMessage(f"Frequency: {self.frequency} Hz, Volume: {int(self.volume * 100)}%, Amplification: {self.amplification_factor:.1f}x")
 
-    def input_frequency_change(self):
-        try:
-            frequency = int(self.frequency_input.text())
-            self.frequency_slider.setValue(frequency)
-        except ValueError:
-            self.frequency_input.setText(str(self.frequency))
-
     def update_amplification(self, value):
         self.amplification_factor = value / 100.0
-        if self.amplified:
-            self.statusBar.showMessage(f"Amplification set to: {self.amplification_factor:.1f}x")
+        self.statusBar.showMessage(f"Amplification set to: {self.amplification_factor:.1f}x")
 
     def toggle_amplification(self):
         if not self.amplified:
@@ -135,18 +134,14 @@ class UltrasonicEmitter(QMainWindow):
     def get_audio_data(self):
         samples = np.linspace(0, 0.1, int(44100 * 0.1), endpoint=False)
         effective_volume = self.volume * self.amplification_factor if self.amplified else self.volume
+        effective_volume = 0 if self.muted else effective_volume
         waveform = (np.sin(2 * np.pi * self.frequency * samples) * effective_volume).astype(np.float32)
         return waveform.tobytes()
 
     def toggle_mute(self):
-        if not self.muted:
-            self.previous_volume = self.volume_slider.value()
-            self.volume_slider.setValue(0)
-            self.muted = True
-        else:
-            self.volume_slider.setValue(self.previous_volume)
-            self.muted = False
-        self.update_audio_settings()  # Ensure volume level is updated in the status bar
+        self.muted = not self.muted
+        self.statusBar.showMessage("Muted" if self.muted else "Unmuted")
+        self.volume_slider.setEnabled(not self.muted)
 
     def toggle_play(self):
         if self.sound_thread and self.sound_thread.isRunning():
@@ -168,10 +163,6 @@ class UltrasonicEmitter(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = UltrasonicEmitter()
-    window.show()
-    sys.exit(app.exec_())
-
     window = UltrasonicEmitter()
     window.show()
     sys.exit(app.exec_())
