@@ -11,7 +11,8 @@ between the levels of 0 - 100,000 hz.
 Sonic now has an amplification bar that allows for sounds beyond what your
 computer is supposed to allow. 
 
-The Requirement.bat is for the .pyw file. Exe is standalone in dist.
+The Requirement.bat is for the .pyw file. Exe is standalone located in /dis.
+(https://github.com/R-D-BioTech-Alaska/Sonic/tree/main/dist) 
 
 ***Warning***
 
