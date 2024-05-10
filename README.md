@@ -1,8 +1,6 @@
-<div style="text-align: center; width: 100%;">
-  <img src="https://lh3.googleusercontent.com/kZ-YQTlfPU2s4d5HkbT2lfwOcZOHjeSgXL3YzzUldKZBCCPeDhk8SrYZSt3P0V7RVHNE0bQuwKEGcMMqqF0PF5lHLm-vDWXP=s500" alt="Sonic" style="width: 24%; height: auto; display: inline-block;">
+<div align="center">
+  <img src="https://lh3.googleusercontent.com/kZ-YQTlfPU2s4d5HkbT2lfwOcZOHjeSgXL3YzzUldKZBCCPeDhk8SrYZSt3P0V7RVHNE0bQuwKEGcMMqqF0PF5lHLm-vDWXP=s500" alt="Sonic">
 </div>
-
-
 
 
 
