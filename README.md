@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://lh3.googleusercontent.com/kZ-YQTlfPU2s4d5HkbT2lfwOcZOHjeSgXL3YzzUldKZBCCPeDhk8SrYZSt3P0V7RVHNE0bQuwKEGcMMqqF0PF5lHLm-vDWXP=s500" alt="Sonic">
+  <img src="https://lh3.googleusercontent.com/kZ-YQTlfPU2s4d5HkbT2lfwOcZOHjeSgXL3YzzUldKZBCCPeDhk8SrYZSt3P0V7RVHNE0bQuwKEGcMMqqF0PF5lHLm-vDWXP=s500" alt="Sonic" width="150">
 </div>
 
 
