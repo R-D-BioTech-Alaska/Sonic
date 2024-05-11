@@ -15,7 +15,7 @@ between the levels of **0 - 100,000 Hz**.
 #### **Update**
 Sonic now includes an **amplification bar** that allows for sounds beyond what your computer is typically capable of producing.
 
-**Download the executable**: [Sonic Standalone Executable](https://github.com/R-D-BioTech-Alaska/Sonic/tree/main/dist)
+**Download the executable**: [Sonic Standalone Executable](https://github.com/R-D-BioTech-Alaska/Sonic/raw/main/dist/Sonic.exe)
 
 ---
 
