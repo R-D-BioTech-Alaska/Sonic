@@ -13,22 +13,22 @@ between the levels of **0 - 100,000 Hz**.
 ---
 
 #### **Update**
-Sonic now has an **amplification bar** that allows for sounds beyond what your
-computer is typically capable of. 
+Sonic now includes an **amplification bar** that allows for sounds beyond what your computer is typically capable of producing.
 
 **Download the executable**: [Sonic Standalone Executable](https://github.com/R-D-BioTech-Alaska/Sonic/tree/main/dist)
 
 ---
 
 ### Requirements
-- The `Requirement.bat` is for running the `.pyw` file.
-- `.exe` is standalone and located in the `/dist` directory.
+- The `Requirement.bat` is needed to run the `.pyw` file.
+  (If `Requirement.bat` fails to execute, run `pip install pyaudio pyqt5 pydub pybluez pyinstaller` or the equivalent commands based on your setup.)
+- The `.exe` file is standalone and located in the `/dist` directory.
 
 ---
 
 ### **Warning** :warning:
-Please be aware that this program emits sounds that can be **harmful and dangerous** 
-to people and animals. The levels allowed on this device can cause hallucinations.
+Please be aware that this program emits sounds that can be **harmful and dangerous** to both people and animals. The levels permitted by this device are able to cause hallucinations.
+
 
 ---
 
